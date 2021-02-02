@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^12.6.2",
     "chess": "^0.4.9",
     "react": "^17.0.1",
+    "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^17.0.1",
     "react-icons": "^4.1.0",
     "react-router-dom": "^5.2.0",
@@ -16,6 +17,7 @@
     "sass": "^1.32.5",
     "socket.io": "^3.1.0",
     "stockfish.js": "^10.0.2",
+    "styled-components": "^5.2.1",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
