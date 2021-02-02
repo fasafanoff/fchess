@@ -7,13 +7,14 @@ class Piece extends React.Component {
   constructor(props) {
     super(props);
     this.Ref = React.createRef();
-    this.rect = null;
   }
-  render() {
-    const { component, color, square } = this.props;
 
-    const { selectedTile, setSelectedTile, moveFunction } = this.context;
-    const { file, rank } = square;
+  componentDidMount() {
+    this.rect = this.Ref.current.getBoundingClientRect();
+  }
+
+  render() {
+    const { component, color } = this.props;
 
     return (
       <div
@@ -26,13 +27,11 @@ class Piece extends React.Component {
     );
   }
   onMouseDown = (e) => {
-    const { setSelectedTile, game, setHolded } = this.context;
+    const { setSelectedTile, game } = this.context;
 
-    const { file, rank, piece } = this.props.square;
+    const { piece } = this.props.square;
 
-    const isBlack = game.moveHistory.length & 1;
-
-    const color = isBlack ? "black" : "white";
+    const color = game.getCurrentSide().name;
 
     if (!piece) {
       return;
@@ -42,21 +41,21 @@ class Piece extends React.Component {
       return;
     }
 
-    setHolded({ ...this.props.square });
+    setSelectedTile(this.props.square);
+    /// !!! doggy line
+    /// in order to change the cursor type we need to
+    /// have pointer-events not to equal to "none"
+    /// but in our case we do, because the events do not go through elements
+    /// and pointer-events "none" allows events to go through ,
+    /// as we simple move the piece element to mouse-pointer as we drag it,
+    /// it blocks the way to trigger the mouse-down event on tile
+    /// but we still need to change the cursor to "grabbing"
     ///
-    /// you     target
-    /// black   black
-    /// black   white
-    /// white   black
-    /// white   white
+    document.body.style.cursor = "grabbing";
 
-    setSelectedTile({ file: file, rank: rank });
-
-    this.Ref.current.style.cursor = "grabbing";
     this.Ref.current.style.transform = `scale(1.2)`;
-    this.Ref.current.style.pointerEvents = `none`;
 
-    this.rect = this.Ref.current.getBoundingClientRect();
+    this.Ref.current.style.pointerEvents = `none`;
 
     this.Ref.current.style.left = `${
       e.clientX - this.rect.left - this.rect.width / 2
@@ -65,13 +64,14 @@ class Piece extends React.Component {
     this.Ref.current.style.top = `${
       e.clientY - this.rect.top - this.rect.height / 2
     }px`;
+
     window.addEventListener("mouseup", this.onMouseUp);
     window.addEventListener("mousemove", this.onMouseMove);
 
+    //// in order to prevent the user from selecting an svg
     e.preventDefault();
   };
   onMouseMove = (e) => {
-    const { selectedTile, setSelectedTile, moveFunction } = this.context;
     this.Ref.current.style.left = `${
       e.clientX - this.rect.left - this.rect.width / 2
     }px`;
@@ -82,23 +82,17 @@ class Piece extends React.Component {
   };
 
   onMouseUp = (e) => {
+    window.removeEventListener("mouseup", this.onMouseUp);
+    window.removeEventListener("mousemove", this.onMouseMove);
+    document.body.style.cursor = "default";
 
-    console.log("ONONONONONONONN")
-window.removeEventListener("mouseup", this.onMouseUp, { capture: true });
-window.removeEventListener("mousemove", this.onMouseMove);
-    e.preventDefault();
-    const { holded, setHolded, moveFunction } = this.context;
-    setHolded(null);
-    if (!this.Ref.current) return;
-
-    
-    this.Ref.current.style.left = `0`;
-    this.Ref.current.style.top = `0`;
-    this.Ref.current.style.transform = `none`;
-    this.Ref.current.style.cursor = "grab";
-    this.Ref.current.style.pointerEvents = `all`;
-  
-    
+    //if we didn't move the piece we need to restore its shape and position
+    if (this.Ref.current) {
+      this.Ref.current.style.left = `0`;
+      this.Ref.current.style.top = `0`;
+      this.Ref.current.style.transform = `none`;
+      this.Ref.current.style.pointerEvents = `all`;
+    }
   };
 }
 
