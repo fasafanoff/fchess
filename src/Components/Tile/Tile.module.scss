@@ -1,0 +1,23 @@
+.selected{
+
+    border: 1px solid blue;
+    
+
+
+}
+
+.white-tile{
+    background-color: #c2b0a3;
+
+}
+
+.black-tile{
+    background-color: brown;
+    
+}
+
+
+.tile-flipped{
+    transform: rotate(180deg);
+}
+

@@ -1,0 +1,18 @@
+
+
+.red{
+
+        width: 100px;
+        height: 100px;
+        background-color: red;
+}
+
+
+.blue{
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    position: relative;
+    bottom:100px;
+    pointer-events: none;
+}
