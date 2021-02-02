@@ -29,9 +29,6 @@ const Board = () => {
 
 
 
-  if(board === null)return <div>ver </div>;
-
-
 
 
 
@@ -41,11 +38,18 @@ const Board = () => {
     return (
       <Tile
         key={`${file}${rank}`}
-        selected={selectedTile && (selectedTile.file === file && selectedTile.rank === rank)}
+        selected={
+          selectedTile &&
+          selectedTile.file === file &&
+          selectedTile.rank === rank
+        }
         square={square}
         //if we flip the board we need to make sure, tiles also get flipped so pieces look normal
         flipped={flipped}
-        dot={moves&&moves.find(move=>move.file===file&&move.rank===rank)}
+        canBeMovedTo={
+          moves &&
+          moves.find((move) => move.file === file && move.rank === rank)
+        }
       />
     );
   });

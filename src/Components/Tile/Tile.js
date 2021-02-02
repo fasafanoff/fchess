@@ -1,4 +1,4 @@
-import React, { createRef } from "react";
+import React from "react";
 
 import style from "./Tile.module.scss";
 
@@ -31,45 +31,21 @@ const Tile = (props) => {
     selected,
     square,
     flipped,
-    dot /**dot means whether to show a dot in the center of the tile or not(can be moved to ) */,
+    canBeMovedTo
   } = props;
   //getting file and rank of the tile
   const { rank, file } = square;
 
   const {
-    selectedTile,
-    setSelectedTile,
     moveFunction,
-    holded,
-    moves,
   } = React.useContext(BoardContext);
 
-  const onClick = (event) => {
-    console.log("clicking");
-    if (dot) {
-      if (!selected) {
-        moveFunction(file, rank);
-      }
-    }
-  };
 
   const onMouseUp = (e) => {
-    
-    console.log("HOLDEDHOLDEDHOLDED",holded);
-    if (
-      holded && moves&&
-      moves.find((move) => move.file === file && move.rank === rank)
-    ) {
-      console.log("on mouse up 2");
+    if ( canBeMovedTo ) {
       moveFunction(file, rank);
     }
   };
-
-  const onMouseDown = (e) => {
-    e.preventDefault();
-  };
-
-
 
 
   let component = MapPieceToComponents[square.piece && square.piece.type];
@@ -83,9 +59,8 @@ const Tile = (props) => {
       }  ${flipped ? style["tile-flipped"] : ""} ${
         selected ? style["selected"] : ""
       }`}
-      onClick={onClick}
+    
       onMouseUp={onMouseUp}
-      onMouseDown={onMouseDown}
       rank={rank}
       file={file}
     >
@@ -94,7 +69,7 @@ const Tile = (props) => {
             color: square.piece ? square.piece.side.name : "transparent",
             square,
           })
-        : dot && <div>*</div>}
+        : canBeMovedTo && <div>*</div>}
     </StyledTile>
   );
 };

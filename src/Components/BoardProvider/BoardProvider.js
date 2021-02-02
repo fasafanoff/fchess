@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React from 'react';
 
 const BoardContext = React.createContext(null);
 
@@ -10,16 +10,12 @@ class BoardProvider extends React.Component {
   constructor(props) {
     super(props);
     this.gameClient = chess.createSimple();
-    this.holded = null;
-    this.isWhite = true;
     this.state = {
       selectedTile: null,
       board: this.gameClient.game.board,
       validMoves: this.gameClient.getStatus().validMoves,
       moves: null,
     };
-
-
   }
 
   render() {
@@ -27,56 +23,69 @@ class BoardProvider extends React.Component {
     return (
       <BoardContext.Provider
         value={{
-          selectedTile: this.state.selectedTile,
           setSelectedTile:this.setSelectedTile,
-          board: this.state.board,
           moveFunction: this.moveFunction,
+          selectedTile: this.state.selectedTile,
+          board: this.state.board,
           moves: this.state.moves,
           game: this.gameClient.game,
-          holded:this.holded,
-          setHolded:this.setHolded
         }}
       >
         {this.props.children}
       </BoardContext.Provider>
     );
   }
-
-  setMoves = ({file,rank}) => {
-    let moves = this.state
-      .validMoves.filter(
+   /// make sure that the selectedTile is up-to-date before using this function 
+  setMoves = () => {
+    /// if the tile is not selected yet , this happens exactly after the move
+    /// (the tile gets deselected) so we need to set moves to null
+    if (!this.state.selectedTile || !this.state.selectedTile.file) this.setState({ moves: null });
+    else {
+      
+      let moves = this.state.validMoves.filter(
         (move) =>
-          move.src.file === file &&
-          move.src.rank === rank
+        move.src.file === this.state.selectedTile.file &&
+        move.src.rank === this.state.selectedTile.rank
       );
-
-      if (moves[0]) {
-        this.setState({ moves: moves[0].squares });
-      } else this.setState({ moves: null });
-     
+      this.setState({ moves:moves[0] && moves[0].squares });
+    }
   };
+
+
+  // the selected piece is moved to fileTo rankTo position
   moveFunction = (fileTo, rankTo) => {
-    console.log("move", fileTo, rankTo);
+
+    let promo = null; 
+    
+    if (this.state.selectedTile.piece.type === "pawn" && (rankTo === 8 || rankTo === 1)) {
+      promo = "Q";
+    }
+
     this.gameClient.move(
       `${this.state.selectedTile.file}${this.state.selectedTile.rank}`,
-      `${fileTo}${rankTo}`
+      `${fileTo}${rankTo}`,promo
     );
+
+
     this.setState({
       board: this.gameClient.game.board,
       validMoves: this.gameClient.getStatus().validMoves,
+      selectedTile:null
+    }, () => {
+      this.setMoves();
     });
-    this.setMoves({ file:null,rank:null});
   };
 
+
+  /// sets the selected tile and updates the moves that the player can make with the piece
   setSelectedTile = (value) => {
-    console.log("setting new moves")
-    this.setState({ selectedTile: value });
-    this.setMoves(value);
+    this.setState({ selectedTile: value }, () => {
+      /// we need a callback coz we need selectedTile to be up-to-date when using setMoves
+      this.setMoves();
+    });
   }
 
-  setHolded = (value) =>{
-    this.holded = value;
-  }
+ 
 }
 
 
