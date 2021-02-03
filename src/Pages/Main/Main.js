@@ -1,13 +1,15 @@
 import React from 'react';
 // import style from "./Main.module.scss";
 import { Link } from "react-router-dom";
+import { BoardProvider } from "../../Components/BoardProvider/BoardProvider";
 import Board from "../../Components/Board/Board";
-import{BoardProvider}from "../../Components/BoardProvider/BoardProvider";
+import MoveHistory from '../../Components/MoveHistory/MoveHistory';
 const Main = () => {
     return (
       <div>
         <BoardProvider>
-          <Board/>
+          <Board />
+          <MoveHistory/>
         </BoardProvider>
 
         Main

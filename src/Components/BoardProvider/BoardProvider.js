@@ -53,6 +53,9 @@ class BoardProvider extends React.Component {
       );
       this.setState({ moves:moves[0] && moves[0].squares });
     }
+
+
+
   };
 
 

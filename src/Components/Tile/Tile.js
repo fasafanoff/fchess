@@ -83,6 +83,8 @@ const Tile = (props) => {
           : style["white-tile"]
       }  ${flipped ? style["tile-flipped"] : ""} ${
         selected ? style["selected"] : ""
+      } ${props.isPrevMove && style["last-move"]} ${
+        props.isPostMove && style["post-move"]
       }`}
       onMouseUp={onEndEvent}
       onTouchEnd={onEndEvent}
