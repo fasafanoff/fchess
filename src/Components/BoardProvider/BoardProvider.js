@@ -1,4 +1,7 @@
 import React from 'react';
+import initSounds from '../../Utils/Sounds/Sounds';
+
+
 
 const BoardContext = React.createContext(null);
 
@@ -16,6 +19,7 @@ class BoardProvider extends React.Component {
       validMoves: this.gameClient.getStatus().validMoves,
       moves: null,
     };
+    initSounds(this.gameClient);
   }
 
   render() {
