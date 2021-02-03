@@ -40,12 +40,37 @@ const Tile = (props) => {
     moveFunction,
   } = React.useContext(BoardContext);
 
+/// this event is onmouseup or ontouchend
+  const onEndEvent = (e) => {
+    
+    if(e.type ==="touchend")
+    {
+      /// here what we do is we call "mouseup" event of another tile that we touched 
+      /// we do this workaround because of the way touchend works 
+      /// it fires "ontouchend" event on a tile that was touch originated from.
+      
+      
+      /// get the element that we need an event to fired upon. 
+        var endTarget = document.elementFromPoint(
+          e.changedTouches[0].pageX,
+          e.changedTouches[0].pageY
+      );
 
-  const onMouseUp = (e) => {
-    if ( canBeMovedTo ) {
+
+      /// create "mouseup" event coz it works the way we want.
+      var event = new MouseEvent("mouseup", {
+        bubbles: true,
+        cancelable: true,
+      });
+      /// fire an event 
+      endTarget.dispatchEvent(event);
+    } 
+    else if ( canBeMovedTo ) {
       moveFunction(file, rank);
     }
   };
+
+
 
 
   let component = MapPieceToComponents[square.piece && square.piece.type];
@@ -59,8 +84,8 @@ const Tile = (props) => {
       }  ${flipped ? style["tile-flipped"] : ""} ${
         selected ? style["selected"] : ""
       }`}
-    
-      onMouseUp={onMouseUp}
+      onMouseUp={onEndEvent}
+      onTouchEnd={onEndEvent}
       rank={rank}
       file={file}
     >

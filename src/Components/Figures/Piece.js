@@ -20,26 +20,30 @@ class Piece extends React.Component {
       <div
         ref={this.Ref}
         className={style["figure-wrapper"]}
-        onMouseDown={this.onMouseDown}
+        onMouseDown={(e) => {
+          this.onStartEvent(e);
+          //// in order to prevent the user from selecting an svg
+          //// on touch-based devices selecting of svg is not possible
+          e.preventDefault();
+        }}
+        onTouchStart={this.onStartEvent}
       >
         {component({ style: { color }, className: style["figure"] })}
       </div>
     );
   }
-  onMouseDown = (e) => {
+  onStartEvent = (e) => {
     const { setSelectedTile, game } = this.context;
 
     const { piece } = this.props.square;
 
     const color = game.getCurrentSide().name;
 
-    if (!piece) {
+    /// you can't interact with white pieces if it's black's move
+    if (color !== piece.side.name || !piece) {
       return;
     }
-
-    if (color !== piece.side.name) {
-      return;
-    }
+    
 
     setSelectedTile(this.props.square);
     /// !!! doggy line
@@ -63,29 +67,37 @@ class Piece extends React.Component {
 
     this.Ref.current.style.top = `${
       e.clientY - this.rect.top - this.rect.height / 2
-    }px`;
-
-    window.addEventListener("mouseup", this.onMouseUp);
-    window.addEventListener("mousemove", this.onMouseMove);
-
-    //// in order to prevent the user from selecting an svg
-    e.preventDefault();
+      }px`;
+    
+    if (e.type === "touchstart") {
+      window.addEventListener("touchend", this.onEndEvent);
+      window.addEventListener("touchmove", this.onMoveEvent);
+    } else {
+      window.addEventListener("mouseup", this.onEndEvent);
+      window.addEventListener("mousemove", this.onMoveEvent);
+    }
   };
-  onMouseMove = (e) => {
+  onMoveEvent = (e) => {
+    let clientX = (e.touches && e.touches[0].clientX) || e.clientX;
+    let clientY = (e.touches && e.touches[0].clientY) || e.clientY;
+
     this.Ref.current.style.left = `${
-      e.clientX - this.rect.left - this.rect.width / 2
+      clientX - this.rect.left - this.rect.width / 2
     }px`;
 
     this.Ref.current.style.top = `${
-      e.clientY - this.rect.top - this.rect.height / 2
+      clientY - this.rect.top - this.rect.height / 2
     }px`;
   };
 
-  onMouseUp = (e) => {
-    window.removeEventListener("mouseup", this.onMouseUp);
-    window.removeEventListener("mousemove", this.onMouseMove);
-    document.body.style.cursor = "default";
-
+  onEndEvent = (e) => {
+    if (e.type === "touchend") {
+      window.removeEventListener("touchend", this.onEndEvent);
+      window.removeEventListener("touchmove", this.onMoveEvent);
+    } else {
+      window.removeEventListener("mouseup", this.onEndEvent);
+      window.removeEventListener("mousemove", this.onMoveEvent);
+    }
     //if we didn't move the piece we need to restore its shape and position
     if (this.Ref.current) {
       this.Ref.current.style.left = `0`;
@@ -93,6 +105,8 @@ class Piece extends React.Component {
       this.Ref.current.style.transform = `none`;
       this.Ref.current.style.pointerEvents = `all`;
     }
+
+    document.body.style.cursor = "default";
   };
 }
 
