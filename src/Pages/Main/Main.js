@@ -4,12 +4,16 @@ import { Link } from "react-router-dom";
 import { BoardProvider } from "../../Components/BoardProvider/BoardProvider";
 import Board from "../../Components/Board/Board";
 import MoveHistory from '../../Components/MoveHistory/MoveHistory';
+import ControlButtons from './../../Components/ControlButtons/ControlButtons';
 const Main = () => {
     return (
       <div>
         <BoardProvider>
-          <Board />
-          <MoveHistory/>
+          {/* <AppearanceProvider> */}
+            <Board />
+          <MoveHistory />
+          <ControlButtons/>
+          {/* </AppearanceProvider> */}
         </BoardProvider>
 
         Main

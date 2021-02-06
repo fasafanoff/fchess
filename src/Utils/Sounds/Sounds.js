@@ -5,14 +5,18 @@ import promote from "../../sounds/promote.webm";
 import checkmate from "../../sounds/game-end.webm";
 import castle from "../../sounds/castle.webm";
 
+let moveSelfO = new Audio(moveSelf);
+let captureO = new Audio(capture);
+let moveCheckO = new Audio(moveCheck);
+let promoteO = new Audio(promote);
+let endgame = new Audio(checkmate);
+let castleO = new Audio(castle);
+
+
+
 function initSounds(gameClient)
 {
-    let moveSelfO = new Audio(moveSelf);
-    let captureO = new Audio(capture);
-    let moveCheckO = new Audio(moveCheck);
-    let promoteO = new Audio(promote);
-    let endgame = new Audio(checkmate);
-    let castleO = new Audio(castle);
+
 
     let soundsToPlay = {
       castle: false,
@@ -24,8 +28,7 @@ function initSounds(gameClient)
   
   let SoundsHandler = () => {
     const state= gameClient.getStatus();
-      if (state.isCheckmate || state.isStalemate || state.isRepetition)
-        endgame.play();
+      if (state.isCheckmate || state.isStalemate || state.isRepetition) endgame.play();
       else if (state.isCheck) moveCheckO.play();
       else if (soundsToPlay.castle) castleO.play();
       else if (soundsToPlay.promote) promoteO.play();
@@ -47,6 +50,22 @@ function initSounds(gameClient)
     gameClient.on("promote", () => {
       soundsToPlay.promote = true;
     });
+    
 }
 
-export default initSounds;
+
+function playSound(state_of_game)
+{
+if (
+  state_of_game.isCheckmate ||
+  state_of_game.isStalemate ||
+  state_of_game.isRepetition
+) endgame.play();
+else if (state_of_game.isCheck) moveCheckO.play();
+else if (state_of_game.castle) castleO.play();
+else if (state_of_game.promotion) promoteO.play();
+else if (state_of_game.capturedPiece) captureO.play();
+else moveSelfO.play();
+}
+
+export { playSound,initSounds };

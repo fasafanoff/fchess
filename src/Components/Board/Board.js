@@ -2,18 +2,30 @@ import React from "react";
 import style from "./Board.module.scss";
 import Tile from "../Tile/Tile";
 import { BoardContext } from "../BoardProvider/BoardProvider";
-
-
-
-////material ui button 
-import { IconButton } from "@material-ui/core";
-import { GiVerticalFlip }   from "react-icons/gi";
-
-
-
 const Board = () => {
-  const [flipped, setFlipped] = React.useState(false);
-  const { selectedTile, board,moves,game } = React.useContext(BoardContext);
+  
+
+  const {
+    selectedTile,
+    moves,
+    game,
+    historyIndex,
+    flipped,
+  } = React.useContext(BoardContext);
+
+
+
+  let board = game.board;
+
+  /// we need to construct a new game only if we wanna see the history of the game thus 
+  /// all turns but the last
+  if(historyIndex !== game.moveHistory.length - 1)
+  {
+    board = game.constructor.load(
+     game.moveHistory.slice(0, historyIndex + 1)
+    ).board;
+  }
+
 
   let numerics = [8, 7, 6, 5, 4, 3, 2, 1];
   let alphabet = ["a", "b", "c", "d", "e", "f", "g", "h"];
@@ -29,11 +41,8 @@ const Board = () => {
   let numbers = numerics.map((i) => <div key={i}>{i}</div>);
   let letters = alphabet.map((letter) => <span key={letter}>{letter}</span>);
 
-  // console.log(game)
 
-
-
-  let lasthistory = game.moveHistory[game.moveHistory.length - 1];
+  let historicalMove = game.moveHistory[historyIndex]; 
 
   //creating tiles
   let tiles = board.squares.map((square) => {
@@ -47,14 +56,14 @@ const Board = () => {
           selectedTile.rank === rank
         }
         isPrevMove={
-          lasthistory &&
-          file === lasthistory.prevFile &&
-          rank === lasthistory.prevRank
+          historicalMove &&
+          file === historicalMove.prevFile &&
+          rank === historicalMove.prevRank
         }
         isPostMove={
-          lasthistory &&
-          file === lasthistory.postFile &&
-          rank === lasthistory.postRank
+          historicalMove &&
+          file === historicalMove.postFile &&
+          rank === historicalMove.postRank
         }
         square={square}
         //if we flip the board we need to make sure, tiles also get flipped so pieces look normal
@@ -68,7 +77,6 @@ const Board = () => {
   });
 
   return (
-    <>
       <div className={style.wrapper}>
         <div className={style["letters"]}>{letters}</div>
         <div className={style["numbers"]}>{numbers}</div>
@@ -80,15 +88,6 @@ const Board = () => {
         <div className={style["numbers"]}>{numbers}</div>
         <div className={style["letters"]}>{letters}</div>
       </div>
-      <IconButton
-        color="primary"
-        variant="outlined"
-        onClick={() => setFlipped(!flipped)}
-        title="Flip the board"
-      >
-        <GiVerticalFlip />
-      </IconButton>
-    </>
   );
 };
 
