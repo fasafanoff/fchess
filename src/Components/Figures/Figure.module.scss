@@ -1,12 +1,12 @@
 .figure-wrapper{
    width: 100%;
     height: 100%;  
-    cursor:grab;
+    // cursor:grab;
     position: relative;  
+    z-index: 100;
 }
 
 .figure{
     width: 80%;
     height: 80%;
 }
-

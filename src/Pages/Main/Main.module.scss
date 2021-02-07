@@ -1,0 +1,25 @@
+.wrapper{
+    width: 100%;
+    height: 100%;   
+    display: flex;
+    background-color: #050A30;
+}
+@media (max-width: 1000px)
+{
+    .wrapper{
+        flex-direction:column;
+        align-items: center;
+    }
+}
+
+.rightSide{
+    background-color: #050A30;
+    width:50%;
+}
+
+@media (max-width: 1000px)
+{
+    .rightSide{
+        width: 100%;
+    }
+}

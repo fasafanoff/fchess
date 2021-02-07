@@ -11,9 +11,8 @@ const Board = () => {
     game,
     historyIndex,
     flipped,
+    validMoves
   } = React.useContext(BoardContext);
-
-
 
   let board = game.board;
 
@@ -44,6 +43,8 @@ const Board = () => {
 
   let historicalMove = game.moveHistory[historyIndex]; 
 
+  let sideColor = game.getCurrentSide().name;
+
   //creating tiles
   let tiles = board.squares.map((square) => {
     const { file, rank } = square;
@@ -72,6 +73,11 @@ const Board = () => {
           moves &&
           moves.find((move) => move.file === file && move.rank === rank)
         }
+        canBeMoved={
+          validMoves &&
+          validMoves.find(({ src }) => src.file === file && src.rank === rank)
+        }
+        sideColor={sideColor}
       />
     );
   });
@@ -81,7 +87,7 @@ const Board = () => {
         <div className={style["letters"]}>{letters}</div>
         <div className={style["numbers"]}>{numbers}</div>
         <div
-          className={`${style["tiles"]} ${flipped && style["tiles-flipped"]}`}
+        className={`${style["tiles"]}`}
         >
           {tiles}
         </div>

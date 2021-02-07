@@ -41,9 +41,11 @@ class BoardProvider extends React.Component {
           board: this.state.board,
           game: this.gameClient.game,
           client: this.gameClient,
+          validMoves:this.state.validMoves,
           setHistoryIndex: this.setHistoryIndex,
           moveFunction: this.moveFunction,
-          flipped:this.state.flipped,
+          flipped: this.state.flipped,
+          flipBoard:this.flipBoard,
         }}
       >
         {this.props.children}
@@ -91,7 +93,7 @@ class BoardProvider extends React.Component {
     }
   };
 
-  // the selected piece is moved to fileTo rankTo position
+  /// the selected piece is moved to fileTo rankTo position
   moveFunction = (fileTo, rankTo) => {
     let promo = null;
 

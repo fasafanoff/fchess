@@ -1,5 +1,5 @@
 import React from 'react';
-// import style from "./Main.module.scss";
+import $ from "./Main.module.scss";
 import { Link } from "react-router-dom";
 import { BoardProvider } from "../../Components/BoardProvider/BoardProvider";
 import Board from "../../Components/Board/Board";
@@ -7,13 +7,14 @@ import MoveHistory from '../../Components/MoveHistory/MoveHistory';
 import ControlButtons from './../../Components/ControlButtons/ControlButtons';
 const Main = () => {
     return (
-      <div>
+      <div className={$.wrapper}>
+
         <BoardProvider>
-          {/* <AppearanceProvider> */}
-            <Board />
-          <MoveHistory />
-          <ControlButtons/>
-          {/* </AppearanceProvider> */}
+          <Board />
+          <div className={$.rightSide}>
+            <MoveHistory />
+            <ControlButtons/>
+          </div>
         </BoardProvider>
 
         Main
